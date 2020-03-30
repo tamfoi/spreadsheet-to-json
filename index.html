@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spreadsheet to JSON</title>
+  </head>
+  <body>
+    <textarea
+      name="spreadsheet"
+      id=""
+      cols="30"
+      rows="10"
+      placeholder="ここにスプレッドシートの内容をコピペする(ctrl+Aで入力部分だけ選択してコピペすること。1行目がキー名として扱われます)"
+    ></textarea>
+    <textarea
+      name="json"
+      id=""
+      cols="30"
+      rows="10"
+      readonly
+      placeholder="ここにJSON化された結果が表示される"
+    ></textarea>
+    <script>
+      window.addEventListener("DOMContentLoaded", event => {
+        const spreadsheetTextArea = document.querySelector(
+          "[name='spreadsheet']"
+        );
+        const jsonTextArea = document.querySelector("[name='json']");
+
+        spreadsheetTextArea.addEventListener("input", event => {
+          const result = [];
+          let keys = [];
+
+          const lines = spreadsheetTextArea.value.split("\n");
+
+          lines.forEach((line, index) => {
+            const rows = line.split("\t");
+
+            //1行目はkey
+            if (index === 0) {
+              keys = rows;
+            } else {
+              const item = {};
+              rows.forEach((row, index) => {
+                item[keys[index]] = row;
+              });
+              result.push(item);
+            }
+          });
+
+          jsonTextArea.value = JSON.stringify(result);
+        });
+      });
+    </script>
+  </body>
+</html>
